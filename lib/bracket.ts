@@ -1,12 +1,19 @@
 import type { GameRow, ResolvedGame } from "./types";
 import { fetchGameChanger } from "./gamechanger";
 
+function isFinalStatus(status: string | null | undefined): boolean {
+  const normalized = (status || "").toLowerCase().trim();
+  return normalized === "completed" || normalized === "final" || normalized === "closed";
+}
+
 function winner(game: ResolvedGame): string | null {
+  if (!isFinalStatus(game.game_status)) return null;
   if (game.score_a == null || game.score_b == null || game.score_a === game.score_b) return null;
   return game.score_a > game.score_b ? game.resolved_team_a : game.resolved_team_b;
 }
 
 function loser(game: ResolvedGame): string | null {
+  if (!isFinalStatus(game.game_status)) return null;
   if (game.score_a == null || game.score_b == null || game.score_a === game.score_b) return null;
   return game.score_a < game.score_b ? game.resolved_team_a : game.resolved_team_b;
 }
