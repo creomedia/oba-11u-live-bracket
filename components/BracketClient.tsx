@@ -11,6 +11,8 @@ type Payload = {
   games: ResolvedGame[];
 };
 
+const OBA_LOGO_URL = "https://ondeck.baseballontario.com/images/footer_bo_logo.png";
+
 function statusLabel(g: ResolvedGame) {
   const s = (g.game_status || "").toLowerCase();
   if (s === "completed" || s === "final") return "FINAL";
@@ -21,10 +23,19 @@ function statusLabel(g: ResolvedGame) {
 function formatTime(value: string | null) {
   if (!value) return "";
   return new Intl.DateTimeFormat("en-CA", {
-    weekday: "short", month: "short", day: "numeric",
-    hour: "numeric", minute: "2-digit",
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
     timeZone: "America/Toronto"
   }).format(new Date(value));
+}
+
+function winnerSide(g: ResolvedGame) {
+  const status = statusLabel(g);
+  if (status !== "FINAL" || g.score_a == null || g.score_b == null || g.score_a === g.score_b) return null;
+  return g.score_a > g.score_b ? "a" : "b";
 }
 
 export default function BracketClient() {
@@ -59,56 +70,102 @@ export default function BracketClient() {
   }, [data]);
 
   return (
-    <main className="shell">
-      <header className="hero">
-        <div>
-          <div className="eyebrow">Ontario Baseball Association</div>
-          <h1>11U AAA<br/>Live Bracket</h1>
-          <p>Riverside • September 4–7, 2026 • Double knockout</p>
-        </div>
-        <div className="liveStamp">
-          <span className="pulse"></span>
-          {data ? `Updated ${new Date(data.refreshed_at).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})}` : "Loading…"}
+    <main>
+      <header className="champHero">
+        <div className="heroShade" />
+        <div className="heroInner">
+          <div className="heroBrand">
+            <div className="logoPlate">
+              <img src={OBA_LOGO_URL} alt="Ontario Baseball Association" className="obaLogo" />
+            </div>
+            <div className="brandWords">
+              <span>Ontario Baseball Association</span>
+              <strong>2026 Provincial Championships</strong>
+            </div>
+          </div>
+
+          <div className="heroCopy">
+            <div className="eyebrow">Windsor, Ontario</div>
+            <h1>11U AAA <span>Live Bracket</span></h1>
+            <p>September 4–7, 2026 <i>•</i> Double knockout</p>
+          </div>
+
+          <div className="heroBottom">
+            <div className="liveStamp">
+              <span className="pulse" />
+              <span>{data ? `Updated ${new Date(data.refreshed_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : "Loading live bracket…"}</span>
+            </div>
+            <div className="venueTag">Riverside / Realtor Park</div>
+          </div>
         </div>
       </header>
 
-      {!data?.database_connected && (
-        <div className="notice">Preview mode: connect Neon in Vercel to enable shared admin changes. GameChanger reads still work when IDs are configured in the database.</div>
-      )}
+      <div className="shell">
+        {!data?.database_connected && (
+          <div className="notice">Preview mode: connect Neon in Vercel to enable shared admin changes.</div>
+        )}
 
-      {error && <div className="error">{error}</div>}
+        {error && <div className="error">{error}</div>}
 
-      {groups.map(([label, games]) => (
-        <section className="round" key={label}>
-          <div className="roundTitle"><span>{label}</span><span>{games.length} {games.length === 1 ? "game" : "games"}</span></div>
-          <div className="cards">
-            {games.map(g => {
-              const status = statusLabel(g);
-              return (
-                <article className={`gameCard ${g.resolved_team_a.includes("Burlington") || g.resolved_team_b.includes("Burlington") ? "burlingtonCard":""}`} key={g.game_key}>
-                  <div className="gameTop">
-                    <b>GAME {g.game_key}</b>
-                    <span className={`status ${status.toLowerCase()}`}>{status}</span>
-                  </div>
-                  <div className={`teamRow ${g.resolved_team_a.includes("Burlington") ? "burlington":""}`}>
-                    <span>{g.resolved_team_a}</span><strong>{g.score_a ?? "—"}</strong>
-                  </div>
-                  <div className={`teamRow ${g.resolved_team_b.includes("Burlington") ? "burlington":""}`}>
-                    <span>{g.resolved_team_b}</span><strong>{g.score_b ?? "—"}</strong>
-                  </div>
-                  <div className="meta">
-                    <span>{formatTime(g.scheduled_at)}</span>
-                    <span>{g.field_name}</span>
-                  </div>
-                  {g.source === "gamechanger" && <div className="gc">GameChanger synced</div>}
-                </article>
-              );
-            })}
+        <div className="bracketIntro">
+          <div>
+            <span className="sectionKicker">Championship bracket</span>
+            <h2>Road to the provincial title</h2>
           </div>
-        </section>
-      ))}
+          <p>Scores refresh automatically every 15 seconds when a GameChanger game is connected.</p>
+        </div>
 
-      <footer>Unofficial live bracket • Scores may be manually corrected by tournament admin.</footer>
+        {groups.map(([label, games]) => (
+          <section className="round" key={label}>
+            <div className="roundTitle">
+              <span>{label}</span>
+              <span>{games.length} {games.length === 1 ? "game" : "games"}</span>
+            </div>
+            <div className="cards">
+              {games.map(g => {
+                const status = statusLabel(g);
+                const winner = winnerSide(g);
+                const hasBurlington = g.resolved_team_a.includes("Burlington") || g.resolved_team_b.includes("Burlington");
+                return (
+                  <article className={`gameCard ${hasBurlington ? "burlingtonCard" : ""}`} key={g.game_key}>
+                    <div className="gameTop">
+                      <b>GAME {g.game_key}</b>
+                      <span className={`status ${status.toLowerCase()}`}>
+                        {status === "LIVE" && <span className="statusDot" />}
+                        {status}
+                      </span>
+                    </div>
+
+                    <div className={`teamRow ${g.resolved_team_a.includes("Burlington") ? "burlington" : ""} ${winner === "a" ? "winner" : ""} ${winner === "b" ? "loser" : ""}`}>
+                      <span>{g.resolved_team_a}</span>
+                      <strong>{g.score_a ?? "—"}</strong>
+                    </div>
+                    <div className={`teamRow ${g.resolved_team_b.includes("Burlington") ? "burlington" : ""} ${winner === "b" ? "winner" : ""} ${winner === "a" ? "loser" : ""}`}>
+                      <span>{g.resolved_team_b}</span>
+                      <strong>{g.score_b ?? "—"}</strong>
+                    </div>
+
+                    <div className="meta">
+                      <span>{formatTime(g.scheduled_at)}</span>
+                      <span>{g.field_name}</span>
+                    </div>
+
+                    {g.source === "gamechanger" && <div className="gc"><span>✓</span> GameChanger synced</div>}
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        ))}
+
+        <footer>
+          <img src={OBA_LOGO_URL} alt="" className="footerLogo" />
+          <div>
+            <strong>2026 11U AAA Ontario Provincial Championship</strong>
+            <span>Unofficial live bracket • Scores may be corrected by tournament administration.</span>
+          </div>
+        </footer>
+      </div>
     </main>
   );
 }

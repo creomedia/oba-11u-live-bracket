@@ -24,17 +24,17 @@ export default function AdminClient() {
     setMessage(`Saving Game ${g.game_key}…`);
     const res = await fetch("/api/admin/game", {
       method: "POST",
-      headers: { "content-type":"application/json", "x-admin-password": password },
+      headers: { "content-type": "application/json", "x-admin-password": password },
       body: JSON.stringify({
-        game_key:g.game_key,
-        team_a:g.team_a,
-        team_b:g.team_b,
-        gc_game_id:g.gc_game_id,
-        score_a:g.score_a,
-        score_b:g.score_b,
-        game_status:g.game_status,
-        is_manual_override:g.is_manual_override,
-        enabled:g.enabled
+        game_key: g.game_key,
+        team_a: g.team_a,
+        team_b: g.team_b,
+        gc_game_id: g.gc_game_id,
+        score_a: g.score_a,
+        score_b: g.score_b,
+        game_status: g.game_status,
+        is_manual_override: g.is_manual_override,
+        enabled: g.enabled
       })
     });
     const data = await res.json();
@@ -49,11 +49,14 @@ export default function AdminClient() {
   return (
     <main className="adminShell">
       <a href="/" className="back">← Public bracket</a>
-      <h1>Bracket Admin</h1>
-      <p className="adminIntro">Add GameChanger game UUIDs as games are created. Leave manual override off to use GameChanger; turn it on for manual scores or OBA re-pairing.</p>
+      <div className="adminTitleBlock">
+        <span className="sectionKicker">Tournament control</span>
+        <h1>Bracket Admin</h1>
+        <p className="adminIntro">Paste each GameChanger game UUID once it is created. With manual override off, live scores and status sync automatically. If GameChanger's opponent name cannot be matched safely, the bracket will refuse to apply the score instead of guessing.</p>
+      </div>
 
       <div className="passwordBar">
-        <input type="password" placeholder="Admin password" value={password} onChange={e=>setPassword(e.target.value)} />
+        <input type="password" placeholder="Admin password" value={password} onChange={e => setPassword(e.target.value)} />
         <span>{message}</span>
       </div>
 
@@ -64,23 +67,33 @@ export default function AdminClient() {
 
             <label>Team A
               <input value={g.team_a ?? ""} disabled={Boolean(g.team_a_source) && !g.is_manual_override}
-                onChange={e=>patch(g.game_key,"team_a",e.target.value)} />
+                onChange={e => patch(g.game_key, "team_a", e.target.value)} />
             </label>
             <label>Team B
               <input value={g.team_b ?? ""} disabled={Boolean(g.team_b_source) && !g.is_manual_override}
-                onChange={e=>patch(g.game_key,"team_b",e.target.value)} />
+                onChange={e => patch(g.game_key, "team_b", e.target.value)} />
             </label>
             <label>GameChanger game UUID
-              <input value={g.gc_game_id ?? ""} onChange={e=>patch(g.game_key,"gc_game_id",e.target.value || null)} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+              <input value={g.gc_game_id ?? ""} onChange={e => patch(g.game_key, "gc_game_id", e.target.value || null)} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
             </label>
 
+            {g.gc_game_id && !g.is_manual_override && (
+              <div className={`syncState ${g.gc_mapping_warning ? "warning" : g.source === "gamechanger" ? "ok" : "waiting"}`}>
+                {g.gc_mapping_warning
+                  ? g.gc_mapping_warning
+                  : g.source === "gamechanger"
+                    ? `GameChanger synced${g.gc_opponent_name ? ` • Opponent: ${g.gc_opponent_name}` : ""}`
+                    : `GameChanger connected${g.gc_opponent_name ? ` • Opponent: ${g.gc_opponent_name}` : " • waiting for score"}`}
+              </div>
+            )}
+
             <div className="scoreInputs">
-              <label>Score A<input type="number" value={g.score_a ?? ""} onChange={e=>patch(g.game_key,"score_a",e.target.value===""?null:Number(e.target.value))}/></label>
-              <label>Score B<input type="number" value={g.score_b ?? ""} onChange={e=>patch(g.game_key,"score_b",e.target.value===""?null:Number(e.target.value))}/></label>
+              <label>Score A<input type="number" disabled={!g.is_manual_override} value={g.score_a ?? ""} onChange={e => patch(g.game_key, "score_a", e.target.value === "" ? null : Number(e.target.value))} /></label>
+              <label>Score B<input type="number" disabled={!g.is_manual_override} value={g.score_b ?? ""} onChange={e => patch(g.game_key, "score_b", e.target.value === "" ? null : Number(e.target.value))} /></label>
             </div>
 
             <label>Status
-              <select value={g.game_status} onChange={e=>patch(g.game_key,"game_status",e.target.value)}>
+              <select disabled={!g.is_manual_override} value={g.game_status} onChange={e => patch(g.game_key, "game_status", e.target.value)}>
                 <option value="upcoming">Upcoming</option>
                 <option value="in_progress">In progress</option>
                 <option value="completed">Completed</option>
@@ -88,11 +101,11 @@ export default function AdminClient() {
             </label>
 
             <div className="checkRow">
-              <label><input type="checkbox" checked={g.is_manual_override} onChange={e=>patch(g.game_key,"is_manual_override",e.target.checked)}/> Manual override</label>
-              <label><input type="checkbox" checked={g.enabled} onChange={e=>patch(g.game_key,"enabled",e.target.checked)}/> Show game</label>
+              <label><input type="checkbox" checked={g.is_manual_override} onChange={e => patch(g.game_key, "is_manual_override", e.target.checked)} /> Manual override</label>
+              <label><input type="checkbox" checked={g.enabled} onChange={e => patch(g.game_key, "enabled", e.target.checked)} /> Show game</label>
             </div>
 
-            <button onClick={()=>save(g)}>Save Game {g.game_key}</button>
+            <button onClick={() => save(g)}>Save Game {g.game_key}</button>
           </section>
         ))}
       </div>

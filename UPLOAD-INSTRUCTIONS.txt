@@ -1,0 +1,18 @@
+OBA LIVE BRACKET REFRESH — FILES TO REPLACE/ADD
+
+Replace these existing files in GitHub:
+- app/globals.css
+- app/layout.tsx
+- app/api/bracket/route.ts
+- components/BracketClient.tsx
+- components/AdminClient.tsx
+- lib/bracket.ts
+- lib/types.ts
+
+Add this new file:
+- public/windsor-hero.jpg
+
+No database migration is required for this update.
+No environment variables need to change.
+
+After committing the files to main, Vercel should redeploy automatically.

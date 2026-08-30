@@ -24,4 +24,6 @@ export type ResolvedGame = GameRow & {
   source: "manual" | "gamechanger" | "scheduled";
   gc_status?: string | null;
   line_score?: unknown;
+  gc_opponent_name?: string | null;
+  gc_mapping_warning?: string | null;
 };

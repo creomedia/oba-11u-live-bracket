@@ -9,7 +9,7 @@ export async function GET() {
   const games = await resolveBracket(rows);
   return NextResponse.json({
     tournament: "2026 11U AAA OBA Championship",
-    location: "Riverside",
+    location: "Windsor, Ontario",
     database_connected: hasDatabase,
     refreshed_at: new Date().toISOString(),
     games
