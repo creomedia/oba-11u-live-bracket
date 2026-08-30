@@ -1,0 +1,30 @@
+:root{
+  --bg:#07111f;--panel:#0f1b2d;--panel2:#132138;--line:#263852;--text:#f7f9fc;
+  --muted:#91a2bb;--gold:#ffc94a;--red:#e43b4f;--green:#33d69f;--blue:#77b9ff;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--text);background:radial-gradient(circle at 50% -20%,#173155 0,#07111f 48%);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:inherit}.shell{max-width:1180px;margin:auto;padding:28px 18px 70px}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:24px}
+.eyebrow{text-transform:uppercase;letter-spacing:.16em;color:var(--gold);font-weight:900;font-size:12px}
+h1{font-size:clamp(38px,7vw,68px);line-height:.92;margin:8px 0 10px;letter-spacing:-.04em}
+.hero p{color:var(--muted);margin:0}.liveStamp{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:10px 13px;color:var(--muted);white-space:nowrap}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(51,214,159,.1)}
+.notice,.error{padding:13px 15px;border-radius:12px;margin:14px 0;font-size:13px}.notice{background:#14253d;border:1px solid #294362;color:#b9c8dc}.error{background:#35151b;border:1px solid #76313c}
+.round{margin-top:31px}.roundTitle{display:flex;justify-content:space-between;color:var(--muted);text-transform:uppercase;font-weight:900;font-size:12px;letter-spacing:.09em;margin-bottom:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.gameCard{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,.17)}
+.burlingtonCard{border-color:#426c9d}.gameTop{display:flex;justify-content:space-between;padding:11px 13px;border-bottom:1px solid var(--line);font-size:11px;color:var(--muted)}
+.status{font-weight:900}.status.final{color:var(--gold)}.status.live{color:var(--green)}
+.teamRow{display:grid;grid-template-columns:1fr 48px;align-items:center;min-height:49px;padding:0 13px;border-bottom:1px solid rgba(38,56,82,.65);font-weight:800}
+.teamRow strong{text-align:right;font-size:24px}.teamRow.burlington{color:var(--blue)}
+.meta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);padding:10px 13px;font-size:11px}.gc{padding:0 13px 11px;color:var(--green);font-size:11px;font-weight:800}
+footer{text-align:center;color:var(--muted);font-size:12px;margin-top:45px}
+.adminShell{max-width:1000px;margin:auto;padding:28px 18px 70px}.back{text-decoration:none;color:var(--blue)}.adminShell h1{font-size:48px}.adminIntro{color:var(--muted);max-width:760px}
+.passwordBar{position:sticky;top:0;z-index:10;display:flex;gap:12px;align-items:center;background:rgba(7,17,31,.94);backdrop-filter:blur(12px);padding:13px 0;margin:14px 0}
+.passwordBar input,.adminCard input,.adminCard select{background:#081421;border:1px solid var(--line);color:white;border-radius:9px;padding:10px 11px;width:100%}
+.passwordBar input{max-width:280px}.passwordBar span{color:var(--muted);font-size:12px}
+.adminGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:13px}.adminCard{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:14px;display:grid;gap:10px}
+.adminHeading{display:flex;justify-content:space-between;gap:10px}.adminHeading span{color:var(--muted);font-size:11px;text-align:right}.adminCard label{font-size:11px;color:var(--muted);display:block}.adminCard input,.adminCard select{margin-top:4px}.adminCard input:disabled{opacity:.5}.scoreInputs{display:grid;grid-template-columns:1fr 1fr;gap:9px}.checkRow{display:flex;gap:18px}.checkRow label{display:flex;align-items:center;gap:5px}.checkRow input{width:auto;margin:0}.adminCard button{background:var(--red);color:white;border:0;border-radius:10px;padding:11px;font-weight:900;cursor:pointer}
+@media(max-width:620px){.shell{padding:19px 11px 50px}.hero{align-items:flex-start;flex-direction:column}.hero h1{font-size:42px}.cards{grid-template-columns:1fr}.meta{flex-direction:column}.adminGrid{grid-template-columns:1fr}.passwordBar{align-items:stretch;flex-direction:column}.passwordBar input{max-width:none}}
