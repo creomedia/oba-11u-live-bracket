@@ -18,6 +18,7 @@ type MappedLineScore = { a: LineSide; b: LineSide };
 
 const OBA_LOGO_URL = "https://ondeck.baseballontario.com/images/footer_bo_logo.png";
 const FAVOURITE_TEAM = "Burlington";
+const BULLS_LOGO_SRC = "/bulls-logo.png";
 
 function statusLabel(g: ResolvedGame) {
   const s = (g.game_status || "").toLowerCase();
@@ -279,9 +280,20 @@ function TeamNameBlock({
         ? `${record.wins}-0 • Undefeated`
         : `${record.wins}-${record.losses} • ${record.losses === 1 ? "1 loss" : "2 losses"}`;
 
+  const isBurlington = name.includes("Burlington Bulls");
+
   return (
     <div className={styles.teamIdentity}>
-      <span>{name}</span>
+      <span className={styles.teamNameRow}>
+        {isBurlington && (
+          <img
+            src={BULLS_LOGO_SRC}
+            alt="Burlington Bulls logo"
+            className={styles.inlineLogo}
+          />
+        )}
+        <span>{name}</span>
+      </span>
       {!isPlaceholder(name) && (
         <small className={eliminated ? styles.eliminatedText : ""}>
           {eliminated ? `${descriptor} • ELIMINATED` : descriptor}
@@ -457,7 +469,10 @@ export default function BracketClient() {
             <span className={styles.dashboardKicker}>Burlington tracker</span>
             <div className={styles.trackerHeader}>
               <div>
-                <strong>{burlingtonName}</strong>
+                <strong className={styles.trackerTeamName}>
+                  <img src={BULLS_LOGO_SRC} alt="Burlington Bulls logo" className={styles.trackerLogo} />
+                  <span>{burlingtonName}</span>
+                </strong>
                 <span>{burlingtonRecord.wins}-{burlingtonRecord.losses} tournament record</span>
               </div>
               <div className={styles.recordBadge}>
