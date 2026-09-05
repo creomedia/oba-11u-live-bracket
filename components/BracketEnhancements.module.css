@@ -47,6 +47,19 @@
   letter-spacing:-.025em;
 }
 
+.trackerTeamName{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.trackerLogo{
+  width:24px;
+  height:24px;
+  object-fit:contain;
+  flex:0 0 auto;
+}
+
 .trackerHeader span{
   color:var(--muted);
   font-size:11px;
@@ -128,6 +141,25 @@
 }
 
 .teamIdentity>span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.teamNameRow{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+}
+
+.inlineLogo{
+  width:18px;
+  height:18px;
+  object-fit:contain;
+  flex:0 0 auto;
+}
+
+.teamNameRow>span{
   overflow:hidden;
   text-overflow:ellipsis;
 }
